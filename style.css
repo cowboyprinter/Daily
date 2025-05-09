@@ -10,6 +10,9 @@ body {
     justify-content: center;
     align-items: flex-start; /* Align to top for long page */
     min-height: 100vh;
+
+     /* ... existing styles ... */
+    overflow-x: hidden; /* Prevent horizontal scroll on body */
 }
 
 .page-background { /* For crinkly edges and shadow */
@@ -20,6 +23,10 @@ body {
     position: relative;
     margin-top: 20px;
     margin-bottom: 20px;
+     box-sizing: border-box; /* ADD or ensure this */
+    width: 100%; /* Allow it to take full width if needed */
+    max-width: calc(8.5in + 40px); /* Ensure it doesn't get too wide with padding */
+    overflow-x: hidden; /* Prevent horizontal scroll from this element */
 }
 
 /* Crinkly edge effect - pseudo-elements might be too complex for simple print */
@@ -33,7 +40,10 @@ body {
 
 /* Simple subtle gradient corner shading (can be expanded) */
 .newspaper-page {
-    width: 8.5in;
+    max-width: 8.5in;
+    width: 98%;
+    margin-left: auto;
+    margin-right: auto;
     min-height: 11in; /* Ensure it's at least letter size */
     padding: 0.5in;
     box-sizing: border-box;
@@ -428,5 +438,124 @@ body {
     a { text-decoration: none; color: inherit; } /* Make links look like normal text for print */
     a[href^="http"]::after { /* Optionally show full URLs for print */
       /* content: " (" attr(href) ")"; */ /* Can make it cluttered */
+    }
+}
+/* style.css - Add this AT THE END of your file */
+
+@media (max-width: 768px) { /* Adjust breakpoint as needed, 768px is a common tablet/large phone size */
+    
+    .newspaper-page {
+        width: 100%; /* Use full width on smaller screens */
+        padding: 15px; /* Reduce padding on mobile */
+        min-height: auto; /* Allow height to adjust */
+        border: none; /* Optionally remove border on mobile for more space */
+    }
+
+    .page-background {
+        padding: 5px; /* Reduce padding on outer container */
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+
+    .masthead {
+        flex-direction: column; /* Stack masthead items */
+        align-items: center; /* Center them when stacked */
+        text-align: center;
+    }
+
+    .date-time-section, 
+    .price-section {
+        text-align: center;
+        flex-basis: auto; /* Allow them to take natural width */
+        margin-bottom: 10px;
+    }
+
+    .title-section {
+        margin-bottom: 10px;
+    }
+    .logo {
+        margin-bottom: 10px;
+    }
+
+    .main-title {
+        font-size: 1.8em; /* Adjust font sizes for mobile */
+    }
+    .sub-title {
+        font-size: 1em;
+    }
+    .sub-sub-title {
+        font-size: 0.8em;
+    }
+    .main-headline {
+        font-size: 1.6em;
+    }
+    .story-headline {
+        font-size: 1.3em;
+    }
+
+
+    .five-columns,
+    .full-width-story .story-content {
+        column-count: 1; /* Single column for all story text */
+        column-rule: none; /* Remove column rules */
+    }
+
+    .media-wrap.video-wrap,
+    .media-wrap.image-wrap {
+        float: none; /* Remove floats */
+        width: 100%;  /* Make media full width */
+        margin-left: 0;
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+    .media-wrap video, .media-wrap img {
+        max-width: 100%;
+    }
+
+
+    .below-fold-content {
+        grid-template-columns: 1fr; /* Single column for below-fold items */
+        grid-template-areas: 
+            "story2"
+            "cartoon"
+            "tictactoe" /* Consider if game is usable on mobile, or hide */
+            "story3"
+            "advertisement";
+        gap: 15px;
+    }
+
+    .tic-tac-toe-board {
+        grid-template-columns: repeat(3, 50px); /* Smaller cells */
+        grid-template-rows: repeat(3, 50px);
+        width: 160px; /* Adjust size */
+    }
+    .cell {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5em;
+    }
+
+    .scrolling-news-ticker {
+        font-size: 0.8em; /* Smaller ticker text */
+    }
+    /* You might want to adjust the ticker animation or content for very small screens */
+
+    .page-footer {
+        font-size: 0.75em;
+    }
+}
+
+@media (max-width: 480px) { /* Even smaller screens */
+    .main-title {
+        font-size: 1.5em;
+    }
+    .main-headline {
+        font-size: 1.3em;
+    }
+    .story-headline {
+        font-size: 1.1em;
+    }
+     .newspaper-page {
+        padding: 10px;
     }
 }
