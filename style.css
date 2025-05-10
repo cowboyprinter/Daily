@@ -201,11 +201,8 @@ body {
 }
 .media-wrap.video-wrap {
     float: left; /* Basic wrap */
-    width: 48%; /* Adjust for 5 columns, this would be ~2.5 col width */
-    margin-right: 15px;
-    margin-bottom: 5px;
-    /* For better wrapping, consider this for the element that needs to wrap */
-    shape-outside: rectangle(); /* modern CSS for better wrap, might need polyfill or simpler float */
+    width: 100%; /* Make the video fill the entire column width */
+    margin: 0 auto 15px; /* Center the video and add spacing below */
 }
 .media-wrap.image-wrap {
     float: right; /* Basic wrap */
@@ -219,6 +216,12 @@ body {
     max-width: 100%;
     height: auto;
     border: 1px solid #bca58c;
+}
+.media-wrap video {
+    width: 100%; /* Ensure the video fills the container */
+    height: auto; /* Maintain aspect ratio */
+    display: block; /* Ensure proper layout */
+    border: 2px solid #5c3d2e; /* Optional: Add a border for styling */
 }
 .story-image {
     border: 2px solid #5c3d2e;
@@ -557,5 +560,147 @@ body {
     }
      .newspaper-page {
         padding: 10px;
+    }
+}
+
+/* Scale the images and video poster 4 times larger */
+.story-image, 
+.logo, 
+.video-wrap video {
+    width: 400%; /* 4 times larger */
+    height: auto; /* Maintain aspect ratio */
+    max-width: 100%; /* Prevent overflow */
+}
+
+/* Ensure they fill the screen on mobile */
+@media (max-width: 768px) {
+    .story-image, 
+    .logo, 
+    .video-wrap video {
+        width: 100vw; /* Full viewport width */
+        height: auto; /* Maintain aspect ratio */
+    }
+}
+
+/* Scale the advertisement image 4 times larger */
+.ad-image {
+    width: 400%; /* 4 times larger */
+    height: auto; /* Maintain aspect ratio */
+    max-width: 100%; /* Prevent overflow */
+}
+
+/* Ensure it fills the screen on mobile */
+@media (max-width: 768px) {
+    .ad-image {
+        width: 100vw; /* Full viewport width */
+        height: auto; /* Maintain aspect ratio */
+    }
+}
+
+/* Scale the Story Three image 4 times larger */
+.story-three .story-image {
+    width: 400%; /* 4 times larger */
+    height: auto; /* Maintain aspect ratio */
+    max-width: 100%; /* Prevent overflow */
+}
+
+/* Ensure it fills the screen on mobile */
+@media (max-width: 768px) {
+    .story-three .story-image {
+        width: 100vw; /* Full viewport width */
+        height: auto; /* Maintain aspect ratio */
+    }
+}
+
+/* Remove column constraints and allow images to fill more space */
+
+/* Story 1 and Story 3 image adjustments */
+.story-one .story-image,
+.story-three .story-image {
+    width: 100%; /* Allow the image to take full width of its container */
+    height: auto; /* Maintain aspect ratio */
+    max-width: 100%; /* Prevent overflow */
+    display: block; /* Ensure proper layout */
+    margin: 0 auto 15px; /* Center the image and add spacing below */
+}
+
+/* Allow text to wrap around images */
+.story-one .story-content,
+.story-three .story-content {
+    display: flex; /* Use flexbox for layout */
+    flex-wrap: wrap; /* Allow wrapping of text around the image */
+    gap: 15px; /* Add spacing between the image and text */
+}
+
+.story-one .story-image,
+.story-three .story-image {
+    flex: 0 0 auto; /* Prevent the image from shrinking or growing */
+}
+
+.story-one .story-text,
+.story-three .story-text {
+    flex: 1 1 0; /* Allow the text to take up remaining space */
+    text-align: justify; /* Justify the text for a clean layout */
+}
+
+/* Ensure responsiveness on smaller screens */
+@media (max-width: 768px) {
+    .story-one .story-content,
+    .story-three .story-content {
+        flex-direction: column; /* Stack the image and text vertically */
+    }
+
+    .story-one .story-image,
+    .story-three .story-image {
+        width: 100%; /* Make the image full width on smaller screens */
+    }
+}
+
+/* General image styles */
+.story-image {
+    width: 100%; /* Allow full width */
+    height: auto; /* Maintain aspect ratio */
+    display: block; /* Ensure proper layout */
+    margin: 0 auto 15px; /* Center the image and add spacing */
+    border: 2px solid #5c3d2e; /* Consistent border */
+}
+
+/* Remove column constraints for Story 1 and Story 3 */
+.story-one .story-content,
+.story-three .story-content {
+    column-count: 1; /* Disable multi-column layout */
+    column-gap: 0; /* Remove gaps */
+    display: block; /* Ensure proper layout */
+}
+
+/* Allow text to wrap around images */
+.story-one .story-content,
+.story-three .story-content {
+    display: flex; /* Use flexbox for layout */
+    flex-wrap: wrap; /* Allow wrapping of text around the image */
+    gap: 15px; /* Add spacing between the image and text */
+}
+
+.story-one .story-image,
+.story-three .story-image {
+    flex: 0 0 auto; /* Prevent the image from shrinking or growing */
+}
+
+.story-one .story-text,
+.story-three .story-text {
+    flex: 1 1 0; /* Allow the text to take up remaining space */
+    text-align: justify; /* Justify the text for a clean layout */
+}
+
+/* Ensure responsiveness on smaller screens */
+@media (max-width: 768px) {
+    .story-one .story-content,
+    .story-three .story-content {
+        flex-direction: column; /* Stack the image and text vertically */
+    }
+
+    .story-one .story-image,
+    .story-three .story-image {
+        width: 100%; /* Make the image full width on smaller screens */
     }
 }
