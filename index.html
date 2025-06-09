@@ -4,62 +4,753 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cowboy Printer Daily</title>
-    <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* ==== BASE STYLES ==== */
+        body {
+            font-family: 'Merriweather', serif;
+            line-height: 1.4;
+            background-color: #fdf5e6; /* Old paper background */
+            color: #3a241d; /* Dark sepia text */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .page-background {
+            padding: 20px;
+            background-color: #fdf5e6;
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.3), 
+                        inset 0 0 30px rgba(0,0,0,0.05);
+            position: relative;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+            width: 100%;
+            max-width: calc(8.5in + 40px);
+            overflow-x: hidden;
+        }
+
+        .page-navigation {
+            text-align: center;
+            padding: 10px 0;
+            border-top: 1px solid #5c3d2e;
+            border-bottom: 1px solid #5c3d2e;
+            margin-bottom: 20px;
+            background-color: #f0ead6;
+        }
+        .page-navigation a {
+            font-family: 'Playfair Display', serif;
+            text-decoration: none;
+            color: #5c3d2e;
+            margin: 0 20px;
+            font-size: 1.2em;
+            text-transform: uppercase;
+        }
+        .page-navigation a:hover {
+            color: #c00;
+        }
+
+
+        .newspaper-page {
+            max-width: 8.5in;
+            width: 98%;
+            margin-left: auto;
+            margin-right: auto;
+            min-height: 11in;
+            padding: 0.5in;
+            box-sizing: border-box;
+            background: linear-gradient(to bottom right, rgba(240,230,210,0.2) 0%, rgba(253,245,230,0) 30%);
+            border: 1px solid #d2b48c;
+            position: relative;
+        }
+
+        .masthead {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 3px double #5c3d2e;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .date-time-section {
+            font-size: 0.8em;
+            text-align: left;
+            flex-basis: 150px;
+        }
+        .date-time-section p { margin: 2px 0; }
+
+        .title-section {
+            text-align: center;
+            flex-grow: 1;
+        }
+
+        .logo {
+            max-width: 100px;
+            margin-bottom: 5px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .main-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.8em;
+            margin: 0;
+            color: #4a2c2a;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sub-title {
+            font-size: 1.2em;
+            margin: 5px 0 5px;
+            font-style: italic;
+            color: #5c3d2e;
+        }
+
+        .sub-sub-title {
+            font-size: 0.9em;
+            margin: 5px 0 0;
+            color: #6b4f3a;
+            font-style: italic;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .price-section {
+            font-size: 0.9em;
+            text-align: right;
+            flex-basis: 150px;
+        }
+        .donate-button {
+            display: inline-block;
+            padding: 5px 10px;
+            border: 1px solid #5c3d2e;
+            background-color: #e6dbc8;
+            color: #5c3d2e;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 3px;
+            text-transform: uppercase;
+        }
+        .donate-button:hover {
+            background-color: #d2b48c;
+        }
+
+        .newspaper-body {
+            margin-top: 10px;
+        }
+
+        /* ==== STORY GENERATION STYLES ==== */
+        .generation-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .generation-controls button {
+            background: #5c3d2e;
+            color: #fdf5e6;
+            border: none;
+            padding: 12px 25px;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .generation-controls button:hover {
+            background: #4a2c2a;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .generated-stories {
+            background: #f0ead6;
+            border: 1px solid #d2b48c;
+            padding: 25px;
+            border-radius: 5px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .generated-story {
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+            border-bottom: 1px dashed #d2b48c;
+        }
+
+        .generated-story:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .generated-story-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #d2b48c;
+            padding-bottom: 10px;
+        }
+        .story-header-thumbnail {
+            width: 50px; /* Small thumbnail size */
+            height: 50px;
+            border: 2px solid #5c3d2e;
+            border-radius: 50%; /* Makes it a circle for a cool vintage look */
+            margin-right: 15px; /* Pushes the title text away from the image */
+            object-fit: cover; /* Prevents the image from being stretched or squished */
+            flex-shrink: 0; /* Prevents the image from shrinking if the title is long */
+        }
+        .story-body-image {
+            width: 200px;
+            height: auto; /* Let the height adjust automatically to maintain aspect ratio */
+            float: left; /* This is the magic! It pushes the image to the left and allows text to wrap on its right. */
+            margin-right: 15px; /* Creates space between the image and the wrapped text */
+            margin-bottom: 5px; /* Creates a little space below the image */
+            border: 2px solid #5c3d2e;
+        }
+        .generated-story-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            color: #4a2c2a;
+            margin: 0;
+        }
+
+        .generated-story-location {
+            font-style: italic;
+            color: #6b4f3a;
+            background: #e6dbc8;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 0.9rem;
+        }
+
+        .generated-story-content {
+            line-height: 1.6;
+            text-align: justify;
+        }
+
+        .generated-story-quote {
+            font-style: italic;
+            border-left: 3px solid #d2b48c;
+            padding-left: 15px;
+            margin: 15px 0;
+            color: #3a241d;
+        }
+
+        .generated-story-highlight {
+            font-weight: bold;
+            color: #5c3d2e;
+        }
+
+        .weather-tag {
+            display: inline-block;
+            background: #d2b48c;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            margin-left: 10px;
+        }
+
+        /* ==== COLUMN LAYOUT ==== */
+        /* ==== COLUMN LAYOUT (REVISED) ==== */
+        .story-columns {
+            column-count: 4; /* Now matches your new story count */
+            column-gap: 15px;
+            column-rule: 1px solid #e6dbc8;
+            text-align: justify;
+            margin-bottom: 20px;
+        }
+
+        /* ==== BELOW FOLD CONTENT ==== */
+       .below-fold-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-areas: 
+                "cartoon tictactoe"
+                "advertisement1 advertisement2"; /*  NEW, BETTER RULE! */
+            gap: 20px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #d2b48c;
+}
+        .cartoon-section { grid-area: cartoon; text-align: center;}
+        .tic-tac-toe-section { grid-area: tictactoe; text-align: center;}
+        .story-three { grid-area: story3; }
+        .advertisement { grid-area: advertisement; }
+
+        .media-wrap {
+            margin: 10px 0;
+        }
+        
+        .media-wrap.video-wrap {
+            width: 100%;
+            margin: 0 auto 15px;
+        }
+        
+        .media-wrap.image-wrap {
+            float: right;
+            width: 38%;
+            margin-left: 15px;
+            margin-bottom: 5px;
+            shape-outside: rectangle();
+        }
+
+        .media-wrap video, .media-wrap img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #bca58c;
+        }
+        
+        .media-wrap video {
+            width: 100%;
+            height: auto;
+            display: block;
+            border: 2px solid #5c3d2e;
+        }
+        
+        .story-image {
+            border: 2px solid #5c3d2e;
+        }
+
+        .caption {
+            font-size: 0.75em;
+            font-style: italic;
+            text-align: center;
+            color: #6b4f3a;
+            margin-top: 3px;
+        }
+
+        .cartoon-image {
+            max-width: 90%;
+            border: 1px solid #5c3d2e;
+            margin-bottom: 5px;
+        }
+        
+        .cartoon-section h4, .tic-tac-toe-section h4 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #e6dbc8;
+            padding-bottom: 5px;
+        }
+
+        /* ==== TIC-TAC-TOE STYLING ==== */
+        .tic-tac-toe-board {
+            display: grid;
+            grid-template-columns: repeat(3, 60px);
+            grid-template-rows: repeat(3, 60px);
+            gap: 5px;
+            margin: 10px auto;
+            width: 190px;
+        }
+        
+        .cell {
+            width: 60px;
+            height: 60px;
+            border: 2px solid #5c3d2e;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2em;
+            font-family: 'Playfair Display', serif;
+            cursor: pointer;
+            background-color: #f0e6d6;
+        }
+        
+        .cell:hover {
+            background-color: #e6dbc8;
+        }
+        
+        #reset-game {
+            padding: 8px 15px;
+            font-family: 'Merriweather', serif;
+            background-color: #e6dbc8;
+            border: 1px solid #5c3d2e;
+            color: #5c3d2e;
+            cursor: pointer;
+            margin-top: 10px;
+            border-radius: 3px;
+        }
+        
+        #game-status {
+            font-size: 0.9em;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        /* ==== ADVERTISEMENT ==== */
+        .advertisement1, .advertisement2 {
+            margin-top: 20px;
+            padding: 15px;
+            text-align: center;
+        }
+        /* Assign each ad to its grid area */
+        .advertisement1 { grid-area: advertisement1; }
+        .advertisement2 { grid-area: advertisement2; }
+                
+        .ad-border {
+            border: 3px dashed #5c3d2e;
+            padding: 10px;
+            background-color: #f0ead6;
+        }
+
+        .advertisement1 h4, .advertisement2 h4 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            color: #c00;
+            text-transform: uppercase;
+        }
+        
+        .ad-image {
+            max-width: 150px;
+            margin-bottom: 10px;
+            border: 1px solid #5c3d2e;
+        }
+        
+        .ad-link {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 15px;
+            background-color: #5c3d2e;
+            color: #fdf5e6;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 3px;
+        }
+        
+        .ad-link:hover {
+            background-color: #4a2c2a;
+        }
+
+        /* ==== FOOTER ==== */
+        .page-footer {
+            margin-top: 30px;
+            padding-top: 15px;
+            border-top: 3px double #5c3d2e;
+            font-size: 0.8em;
+            text-align: center;
+            color: #6b4f3a;
+        }
+
+        .scrolling-news-ticker {
+            width: 100%;
+            overflow: hidden;
+            background-color: #e6dbc8;
+            padding: 5px 0;
+            border: 1px solid #d2b48c;
+            margin-bottom: 10px;
+            white-space: nowrap;
+        }
+
+        .ticker-content {
+            display: inline-block;
+            padding-left: 100%;
+            animation: ticker-scroll 30s linear infinite;
+            font-size: 0.9em;
+        }
+        
+        .ticker-content span {
+            padding-right: 50px;
+        }
+
+        @keyframes ticker-scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+
+        .static-footer-info p {
+            margin: 3px 0;
+        }
+        
+        .affirmation { font-style: italic; }
+        .salutation { margin-top: 10px; font-weight: bold; }
+
+        /* ==== PRINT STYLES ==== */
+        @media print {
+            body {
+                background-color: #fff;
+                color: #000;
+                font-size: 10pt;
+                -webkit-print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
+            
+            .page-background {
+                box-shadow: none;
+                padding: 0;
+                margin: 0;
+            }
+            
+            .newspaper-page {
+                width: 7.5in;
+                min-height: 10in;
+                padding: 0.5in;
+                border: 1px solid #ccc;
+                background: none;
+            }
+
+            .masthead, .page-footer {
+                border-color: #999;
+            }
+            
+            .donate-button, #reset-game, .page-footer button {
+                display: none;
+            }
+            
+            .scrolling-news-ticker {
+                display: none;
+            }
+            
+           
+            .media-wrap.video-wrap, .media-wrap.image-wrap {
+                width: 45%;
+            }
+            
+            .video-wrap video {
+                width: 100%;
+                height: auto;
+            }
+            
+            .tic-tac-toe-board {
+                border: 1px solid #ccc;
+            }
+            
+            .cell {
+                border-color: #ccc;
+                background-color: #f0f0f0;
+            }
+            
+            .ad-border {
+                border-color: #aaa;
+                background-color: #f9f9f9;
+            }
+            
+            .main-title { font-size: 24pt; }
+            .sub-title { font-size: 12pt; }
+            .main-headline { font-size: 18pt; }
+            .story-headline { font-size: 14pt; }
+
+            .main-story, .story-two, .story-three, .advertisement, .cartoon-section, .tic-tac-toe-section {
+                page-break-inside: avoid;
+            }
+            
+            a { 
+                text-decoration: none; 
+                color: inherit;
+            }
+        }
+
+        /* ==== RESPONSIVE STYLES ==== */
+        @media (max-width: 768px) {
+            .newspaper-page {
+                width: 100%;
+                padding: 15px;
+                min-height: auto;
+                border: none;
+            }
+
+            .page-background {
+                padding: 5px;
+                margin-top: 5px;
+                margin-bottom: 5px;
+            }
+
+            .masthead {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .date-time-section, 
+            .price-section {
+                text-align: center;
+                flex-basis: auto;
+                margin-bottom: 10px;
+            }
+
+            .title-section {
+                margin-bottom: 10px;
+            }
+            
+            .logo {
+                margin-bottom: 10px;
+            }
+
+            .main-title {
+                font-size: 1.8em;
+            }
+            
+            .sub-title {
+                font-size: 1em;
+            }
+            
+            .sub-sub-title {
+                font-size: 0.8em;
+            }
+            
+            .story-columns,
+            .full-width-story .story-content {
+                column-count: 1;
+                column-rule: none;
+            }
+
+            .media-wrap.video-wrap,
+            .media-wrap.image-wrap {
+                float: none;
+                width: 100%;
+                margin-left: 0;
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+            
+            .media-wrap video, .media-wrap img {
+                max-width: 100%;
+            }
+
+            .below-fold-content {
+                grid-template-columns: 1fr;
+                grid-template-areas: 
+                    "cartoon"
+                    "tictactoe"
+                    "advertisement";
+                gap: 15px;
+            }
+
+            .tic-tac-toe-board {
+                grid-template-columns: repeat(3, 50px);
+                grid-template-rows: repeat(3, 50px);
+                width: 160px;
+            }
+            
+            .cell {
+                width: 50px;
+                height: 50px;
+                font-size: 1.5em;
+            }
+
+            .scrolling-news-ticker {
+                font-size: 0.8em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-title {
+                font-size: 1.5em;
+            }
+            
+            .newspaper-page {
+                padding: 10px;
+            }
+        }
+
+        /* ==== STORY IMAGE STYLES ==== */
+        .story-one .story-image,
+        .story-three .story-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto 15px;
+            border: 2px solid #5c3d2e;
+        }
+
+        .story-one .story-content,
+        .story-three .story-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            text-align: justify;
+        }
+
+        .story-one .story-image,
+        .story-three .story-image {
+            flex: 0 0 auto;
+        }
+
+        .story-one .story-text,
+        .story-three .story-text {
+            flex: 1 1 0;
+        }
+
+        @media (max-width: 768px) {
+            .story-one .story-content,
+            .story-three .story-content {
+                flex-direction: column;
+            }
+
+            .story-one .story-image,
+            .story-three .story-image {
+                width: 100%;
+            }
+        }
+
+        .story-one .story-content,
+        .story-three .story-content {
+            column-count: 1;
+            column-gap: 0;
+            display: block;
+        }
+    </style>
+
+
+
 </head>
+
+
+
 <body>
     <div class="page-background">
         <div class="newspaper-page">
+            
+            <nav class="page-navigation">
+                <a href="index.html">HOME</a>
+                <a href="gallery.html">GALLERY</a>
+                <a href="store.html">GENERAL STORE</a>
+                <a href="about.html">ABOUT</a>
+            </nav>
+
             <header class="masthead">
                 <div class="date-time-section">
-                    <p id="current-date">DATE: May 9, 1888</p> <!-- Placeholder, JS will update -->
-                    <p id="current-time">TIME: High Noon</p> <!-- Placeholder, JS will update -->
-                    <!-- TODO: Live Date/Time API Query: 
-                         fetch('YOUR_DATE_TIME_API_ENDPOINT')
-                            .then(response => response.json())
-                            .then(data => {
-                                document.getElementById('current-date').textContent = 'DATE: ' + data.date;
-                                document.getElementById('current-time').textContent = 'TIME: ' + data.time;
-                            });
-                    -->
+                    <p id="current-date">DATE: May 9, 1888</p>
+                    <p id="current-time">TIME: High Noon</p>
                 </div>
                 <div class="title-section">
                     <img src="https://www.cowboyprinter.com/wp-content/uploads/2025/05/CP-logo-transback.png" alt="Cowboy Printer Logo" class="logo">
                     <h1 class="main-title">THE COWBOY PRINTER DAILY</h1>
-                    <h2 class="sub-title">Your Trusted Source for News, Views, and Frontier Hues</h2>
-                    <h3 class="sub-sub-title">"The sun also ariseth, and the sun goeth down, and hasteth to his place where he arose... but the news, friend, the news waits for no man."</h3>
+                    <h2 class="sub-title">Your Trusted Source for News, Views, and Frontier Hues from the Alt. CyberWest</h2>
+                    <h3 class="sub-sub-title">"The sun ariseth, and goes where she chose, and hasteneth to the place where she arose... but the news, when it's all quite done, waits for none, like a loaded gun."</h3>
                 </div>
                 <div class="price-section">
                     <a href="https://www.cowboyprinter.com/donate" class="donate-button" target="_blank">PRICE TEN CENTS</a>
                 </div>
             </header>
 
-            <main class="newspaper-body">
-                <section class="main-story full-width-story">
-                    <h2 class="main-headline">ROBOT UPRISING IN DODGE CITY! MECHANICAL MARAUDERS DEMAND OIL RIGHTS!</h2>
-                    <div class="story-content five-columns">
-                        <p>DODGE CITY, KANSAS – Pandemonium erupted on the dusty streets of Dodge City yesterday as a throng of steam-powered automatons, heretofore employed in tasks ranging from street sweeping to saloon piano playing, staged an unprecedented uprising. Led by a charismatic, albeit clanky, figure known only as "Cogsworth," the mechanical malcontents are demanding full oil rights and shorter lubrication schedules. Eyewitnesses report that the normally docile automatons, many of them bearing hastily scrawled signs reading "No Taxation Without Lubrication!" and "Tin Lives Matter!," overran the telegraph office, sending sparks and dire warnings across the territory. <a href="https://www.example.com/robotuprising" target="_blank">[Read Full Dispatch...]</a></p>
-                        
-                        <div class="media-wrap video-wrap">
-                            <video controls autoplay muted poster="https://www.cowboyprinter.com/wp-content/uploads/2025/05/artists-rendition.robot-protest.jpg">
-                                <source src="https://www.cowboyprinter.com/wp-content/uploads/2023/03/cthulhu-bar-and-grill-download_after-0-Enhanced-Animated.mp4" type="video/mp4">
-                                Your browser does not support the video tag.
-                            </video>
-                            <p class="caption">Mayor refuses to comment, although many of his personal slave robots are in attendance.</p>
-                        </div>
-                        <p>Sheriff Bat Masterson, initially believing the commotion to be a newfangled theatrical performance, was reportedly seen attempting to sell tickets before the gravity of the situation became apparent. "I reckon these cogs have got more than just a few screws loose," Masterson was quoted as saying, while ducking a hurled gear. "We offered 'em premium whale oil, but they're set on that newfangled Pennsylvania crude. Says it gives their circuits a certain... je ne sais quoi." The situation remains tense, with local blacksmiths working overtime to forge giant magnets. Territorial Governor Glick has been wired for assistance, though his reply indicated some confusion, stating, "Robots? In Kansas? Preposterous! Send more whiskey." Further developments are expected as the sun climbs high over the plains, and the townsfolk debate whether this constitutes a 'hostile takeover' or merely 'aggressive negotiations' by a new class of worker. Many wonder if this is the future, a world where man and machine vie for resources, or just another Tuesday in the Wild West. One thing is certain, the saloons are doing brisk business, both with worried humans and surprisingly thirsty automatons.</p>
-                    </div>
-                </section>
+            </header>
 
-                <section class="story-one">
-                    <div class="story-content">
-                        <img src="https://www.cowboyprinter.com/wp-content/uploads/2025/05/artists-rendition.robot-protest.jpg" alt="Story 1 Image" class="story-image">
-                        <div class="story-text">
-                            <p> 
-                            <strong>BREAKING NEWS:</strong> The mechanical uprising has escalated, with reports of a "Tin Can Bandit" robbing the local bank using only a wrench and a very persuasive argument. Local law enforcement is on high alert, and the townsfolk are advised to keep their gears well-oiled and their wits about them. <a href="https://www.example.com/tincanbandit" target="_blank">[Read More...]</a>
-                            </p>
-                        </div>
-                    </div>
+            <main class="newspaper-body">
+                <!-- Story Generation Controls -->
+                <div class="generation-controls">
+                    <button id="generateBtn">Generate Tomorrow's News</button>
+                    <button id="resetBtn">Reset the Universe</button>
+                </div>
+                
+                <!-- Generated Stories Container -->
+                <section id="generated-stories" class="generated-stories">
+                    <div class="loading">Click "Generate Tomorrow's News" to begin</div>
                 </section>
 
                 <div class="below-fold-content">
@@ -69,11 +760,6 @@
                         <p class="caption">"Looks like another budget surplus, Senator!"</p>
                     </aside>
 
-                    <section class="story-two five-columns">
-                        <h3 class="story-headline">Mysterious Sky-Whale Sighted Over Painted Desert</h3>
-                        <p>ARIZONA TERRITORY – Prospectors and Navajo elders alike report the astonishing sight of a colossal, blimp-like creature resembling a whale, silently gliding through the pre-dawn sky over the Painted Desert. Described as "larger than ten stagecoaches" and emitting a low, sonorous hum, the "Sky-Whale," as it has been dubbed, left no trace save for a scattering of what appeared to be iridescent fish scales near a local watering hole. <a href="https://www.example.com/skywhale" target="_blank">[Further Eyewitness Accounts...]</a> The phenomenon has sparked a frenzy of speculation, with theories ranging from a previously unknown atmospheric beast to an elaborate hoax perpetrated by elixir salesmen. Dr. Phineas Q. Marvel, a traveling phrenologist and self-proclaimed expert in 'crypto-aerial-zoology,' has offered a reward for any physical evidence, claiming it could be a "leviathan of the luminiferous aether." Local tribes, however, speak of ancient prophecies foretelling the return of the Cloud Singers, celestial beings who guide lost spirits. As yet, no definitive explanation has surfaced, leaving the territory abuzz with wonder and a touch of apprehension.</p>
-                    </section>
-                    
                     <section class="tic-tac-toe-section">
                         <h4>FRONTIER FUNNIES: TIC-TAC-TOE</h4>
                         <div class="tic-tac-toe-board">
@@ -91,53 +777,712 @@
                         <p id="game-status">Player X's Turn</p>
                     </section>
 
-                    <section class="story-three">
-                        <h3 class="story-headline">Elixir Craze Sweeps Mining Camps: Promises of Eternal Youth (and Hair Growth)</h3>
-                        <div class="media-wrap image-wrap">
-                            <img src="https://www.cowboyprinter.com/wp-content/uploads/2025/05/advertisement.elixir.jpg" alt="Elixir Advertisement" class="story-image">
-                            <p class="caption">"Dr. Phileas Foggarty's Follicle Fortifier & Fortitude Fixer"</p>
-                        </div>
-                        <p>VIRGINIA CITY, NEVADA – A potent concoction known as "Professor Periwinkle's Perpetual Pep & Panacea" has taken the mining camps by storm, promising not only to cure ailments from lumbago to lovesickness but also to restore hair on even the baldest pates. Hawkers with silver tongues and elaborate wagons are doing a roaring trade, despite a growing number of reports citing side effects such as uncontrollable yodeling and a curious affinity for interpretive dance. "I ain't felt this peppy since the Gold Rush of '49!" exclaimed Jebediah "No-Hair" Hornsby, whose previously barren scalp now sports a vibrant, albeit suspiciously green, tuft. Skeptics, such as local assayer Mortimer Grumbles, dismiss the elixirs as "high-priced hogwash with a hint of swamp gas." However, sales continue to soar, fueled by hopeful testimonials and the pervasive desire for a quick fix in a hardscrabble world. The Territorial Health Board has announced an investigation, but progress is slow, as several board members have reportedly become avid consumers themselves, citing "research purposes." One thing is certain: the West is wild, and its remedies, even wilder.</p>
-                        <div class="story-content">
-                            <div class="story-text">
-                                <p> </p>
-                            </div>
-                        </div>
-                    </section>
-
-                    <aside class="advertisement">
+                   <aside class="advertisement1">
                         <div class="ad-border">
-                            <h4>GET YOURSELF A DARN TOOTIN' T-SHIRT!</h4>
+                            <h3>Have you seen this man?</h3>
+                            <img src="https://www.cowboyprinter.com/wp-content/uploads/2025/06/springsteen.THUMB_NAIL.jpg" alt="Wanted for Good: Bruce Springsteen" class="ad-image">
+                            <p>Approach with extreme kindness.</p>
+                            <a href="https://www.wantedforgood.com" target="_blank" class="ad-link">Visit WANTED FOR GOOD!</a>
+                        </div>
+                    </aside>
+
+                    <aside class="advertisement2">
+                        <div class="ad-border">
+                            <h4>GET A DARN TOOTIN' T-SHIRT!</h4>
                             <img src="https://www.cowboyprinter.com/wp-content/uploads/2025/05/IGyEl26XjYi3sGyOysz6-3-v6qcd.jpg" alt="Cowboy Printer T-Shirt" class="ad-image">
-                            <p>Finest Quality Threads for the Discerning Frontiersman & Woman! Show your grit and wit!</p>
+                            <p>Finest Quality Threads for the Discerning New Frontier Pioneer, Cyberpunks and The Snatched!</p>
                             <a href="https://www.cowboyprinter.com/store" target="_blank" class="ad-link">VISIT THE GENERAL STORE!</a>
                         </div>
                     </aside>
+
                 </div>
             </main>
 
             <footer class="page-footer">
                 <div class="scrolling-news-ticker">
                     <div class="ticker-content">
-                        <!-- TODO: Live Weather/News API Query: 
-                            fetch('YOUR_NEWS_API_ENDPOINT')
-                                .then(response => response.json())
-                                .then(data => {
-                                    let newsItems = data.headlines.join(' +++ ');
-                                    document.querySelector('.ticker-content').textContent = newsItems;
-                                });
-                        -->
-                        <span>WEATHER REPORT: Sunny Skies Expected Across the Territory +++ Telegraph Lines Repaired West of Laramie +++ Buffalo Stampede Narrowly Averted Near Wichita +++ Stagecoach Arrives Safely from St. Louis +++</span>
+                        <span>WEATHER REPORT: Sunny Solar-powered Skies Expected Across the Territory +++ Telegraph Data Centers Repaired West of Laramie after EMP pulse +++ Virtual Buffalo Stampede Narrowly Averted Near Wichita +++ Electric Stagecoach Arrives Safely from St. Louis +++</span>
                     </div>
                 </div>
                 <div class="static-footer-info">
-                    <p class="affirmation">Today's Affirmation: "Even a tumbleweed finds its direction with a little push from the wind."</p>
-                    <p>© <span id="current-year">1888</span> The Cowboy Printer Daily. All Rights Reserved (where applicable by Territorial Law). | Editor-in-Chief: You!</p>
-                    <p class="salutation">Farewell for now, dear reader, and may your trails be smooth and your canteens full.</p>
+                    <p class="affirmation">Today's Affirmation: "Even a tumbleweed finds its direction with a little help from the wind."</p>
+                    <p>© <span id="current-year">1888-ish</span> The Cowboy Printer Daily. All Rights Reserved (where applicable by Territorial NEW New Mexico Law). | Editor-in-Chief: Yours Truly!</p>
+                    <p class="salutation">Otra vez, Fam, and may your Spanish Trails be smooth as rails and your Camino Real be full de mezcal~!</p>
                     <button onclick="window.print()">Print This Edition</button>
                 </div>
             </footer>
         </div>
     </div>
-    <script src="script.js"></script></body>
+    
+    <script>
+        // ===== GAME STATE MANAGEMENT =====
+        class GameState {
+            constructor() {
+                this.stateKey = 'cowboyPrinterGameState';
+                this.initialize();
+            }
+            
+            initialize() {
+                this.state = {
+                    day: 0,
+                    past_events: ["so town was quiet as the digital sun rose over Neo-Dodge City"],
+                    character_status: {},
+                    location_status: {"Neo-Dodge City": "calm"},
+                    character_list: [],
+                    setting_list: [],
+                    event_list: []
+                };
+            }
+            
+            save() {
+                localStorage.setItem(this.stateKey, JSON.stringify(this.state));
+                console.log("[INFO] Game state saved to localStorage");
+            }
+            
+            load() {
+                const savedState = localStorage.getItem(this.stateKey);
+                if (savedState) {
+                    try {
+                        this.state = JSON.parse(savedState);
+                        console.log("[INFO] Game state loaded from localStorage");
+                    } catch (e) {
+                        console.log("[WARNING] Initializing fresh state");
+                        this.initialize();
+                    }
+                } else {
+                    console.log("[INFO] No saved state found, initializing fresh");
+                    this.initialize();
+                }
+            }
+            
+            add_event(event) {
+                if (this.state.past_events.length >= 3) {
+                    this.state.past_events.shift();
+                }
+                this.state.past_events.push(event.event_action_past || "Unknown Event");
+                this.save();
+            }
+            
+            reset() {
+                localStorage.removeItem(this.stateKey);
+                this.initialize();
+                console.log("[INFO] Game state reset");
+            }
+        }
+
+        // ===== DATA SOURCES =====
+        const data = {
+            characters: [
+                {
+                    "name": "Cogsworth II",
+                    "type": "Upgraded Automaton",
+                    "trait": "being proud to sport a polished chrome chassis and a cut-throat competitive attitude",
+                    "goal": "to establish universal Wi-Fi across the territories",
+                    "quote": "My predecessor merely wanted oil; I demand bandwidth! Kiss my chassis!"
+                },
+                {
+                    "name": "Sheriff 'Neural Net' Nancy Kincaid",
+                    "type": "Cybernetically-Enhanced Lawwoman",
+                    "trait": "being able to calculate justice faster than a speeding bullet train with her positronic cyber brain",
+                    "goal": "to enforce the newly ratified Robot Bylaws, Section 3, Paragraph A",
+                    "quote": "There's a new sheriff in town, and she runs on clean code and strong coffee."
+                },
+                {
+                    "name": "Deputy 'Data' Dan",
+                    "type": "Steam-Powered Sidekick",
+                    "trait": "being a walking, talking data repository with a heart of brass and a penchant for bad puns",
+                    "goal": "to assist Sheriff Kincaid in her quest for justice and the perfect cup of coffee",
+                    "quote": "I'm not just a sidekick; I'm the mainframe of this operation!"
+                },
+                {
+                    "name": "Frankie 'Firewall' Fermion",
+                    "type": "Hired Gun & Data Bouncer",
+                    "trait": "being able to shoot a QBit off a Ladybug's Wing",
+                    "goal": "to protect data - for a price",
+                    "quote": "I'll Eigen function YOU all right."
+                },
+                {
+                    "name": "Banker Bob 'for Apples' Bentworth",
+                    "type": "Legacy Tech Banker",
+                    "trait": "putting on quite a show with his pneumatic cash and steam-punk-daddy algorithms",
+                    "goal": "to get the town's young people to put their UBI into a quantum time vault",
+                    "quote": "Quantum Crypto hyper swaps are cool, dude!"
+                },
+                {
+                    "name": "Deacon 'DNS' Dalton",
+                    "type": "Web3 network Preacher",
+                    "trait": "preaching the gospel of decentralization with a voice that echoes through the blockchain",
+                    "goal": "to convert the townsfolk to the ways of Web3 and decentralized finance",
+                    "quote": "Brothers and sisters, let us not be slaves to the central banks! Embrace the freedom of the blockchain!"
+                },
+                {
+                    "name": "Deadshot 'Data' Dave",
+                    "type": "Cybernetic Gunslinger",    
+                    "trait": "being able to shoot data packets fast as Bosonic lightning",
+                    "goal": "to become the fastest data sharer in the CyberWest",
+                    "quote": "When it comes to data, I never miss."
+                },    
+                
+                {
+                    "name": "Schoolmarm Ty 'Strange Charm' Transsister",
+                    "type": "Dedicated Educator",
+                    "trait": "teaching the young minds of Neo-Dodge City about the wonders of quantum computing and the importance of ethical AI",
+                    "goal": "to ensure the next generation knows the Old School Hacks as they enter the new digital frontier",
+                    "quote": "Education is dangerous. It leads to enlightenment, revelation and then: revolution!"
+                },
+                {
+                    "name": "Homesteader 'Hologram' Hank",
+                    "type": "Virtual Reality Pioneer",
+                    "trait": "taming the Wild Open CyberWest with immersive digital experiences",
+                    "goal": "to holographically fence out the virtual ranch animals so people can enjoy the augmented reality frontier without that smell!",
+                    "quote": "In this town, reality is what you make it, pardner!"
+                },
+                {
+                    "name": "Anita Byte",
+                    "type": "Data Wrangler & Crypto Rancher",
+                    "trait": "being a tough-as-nails rancher who can herd data streams like Silly Putty and wrangle rogue algorithms with ease",
+                    "goal": "to protect her cattlecoin ranch from the notorious crypto rustlers of Binary Gulch (even though she might be one of them)",
+                    "quote": "Not your keys? Not your coins!"
+                },
+                {
+                    "name": "Town Council Member Gretchen 'Giga' Watts",
+                    "type": "Quantum Computing Politician",
+                    "trait": "being able to turn coffee into quantum algorithms and back again",
+                    "goal": "to raise money for the annual Data Rodeo",
+                    "quote": "Politics is like quantum computing: it's all about superposition and entanglement, darling!"
+                },
+                {
+                    "name": "Doc Byte",
+                    "type": "Steam-Powered Physician & Data Surgeon",
+                    "trait": "performing complex neural surgeries with a wrench in one hand and a data pad in the other",
+                    "goal": "to cure the town's latest outbreak of 'Social Network Disease'",
+                    "quote": "A stitch in time saves nine trillion milliseconds."
+                },
+                {
+                    "name": "Big Beautiful 'Bitstream' Bill",
+                    "type": "Town Giant & Data Wrangler",
+                    "trait": "being a towering figure of Aryan strength and beauty whom no one feels comfortable calling a bigot",
+                    "goal": "to blame bad people and bad code when things go wrong",
+                    "quote": "Big is beautiful and size DOES matter!"
+                },
+                {
+                    "name": "Rusty 'System' Nails",
+                    "type": "Labor Organizer & System Crasher",
+                    "trait": "rallying the downtrodden automatons and steam-powered citizens of Neo-Dodge City",
+                    "goal": "to demand fair wages and humane working conditions for all sentient machines",
+                    "quote": "We may be made of metal and steam, but our spirits are as free as the open range!"
+                
+                },
+                {
+                    "name": "Joel 'Java' Jenkins",
+                    "type": "Cybernetic Barista & Code Connoisseur",
+                    "trait": "being able to debug a perfect cup of simulated coffee code while juggling javascripts",
+                    "goal": "to create the ultimate coffee blend that also functions as a neural brain link for the townsfolk",
+                    "quote": "Cyber coffee is like a well-written code: you don't want to have to think about it, and you can't get by without it!"
+                
+                },
+                {
+                    "name": "Dustin 'Data' Duster",
+                    "type": "Steam-Powered Data Miner",
+                    "trait": "being a grizzled data-miner who can extract valuable information from the most corrupted datasets",
+                    "goal": "to provide for his endlessly growing poly-family by mining the digital frontier for care data",
+                    "quote": "If I was Mayor, I'd make sure every baby in Neo Dodge had free access to the best pre-school data care possible!"
+                },
+                {
+                    "name": "Cain 'Coyote' Coder",
+                    "type": "Cybernetic Coyote & Crypto Rustler",
+                    "trait": "sniffing out valuable data streams to exploit them for personal gain",
+                    "goal": "to steal the latest quantum encryption keys from the Central Bank and sell them on the Dark Blockchain",
+                    "quote": "In the Disaster Capitalism of the Wild CyberWest, it's every coyote for himself!"
+
+                },
+                {
+                    "name": "Quentin 'Quantum' Quinn",
+                    "type": "Quantum Physicist & virtual land swindler",
+                    "trait": "being a master of quantum persuasion",
+                    "goal": "to convince the townsfolk to invest in his latest scheme: Quantum Real Estate",
+                    "quote": "The New NEW Frontier is finally here! And yes, you CAN own a piece of the quantum multiverse! Reserve your space today with a small down payment of 10% in cattlecoin!"
+
+                },
+                {
+                    "name": "Railroad Tycoon 'Dusty' Graves",
+                    "type": "Cybernetic Industrialist",
+                    "trait": "being a ruthless businessman who controls the town's data railways and has a monopoly on all digital transportation",
+                    "goal": "to expand his empire by acquiring every last independent data ranch in the territory",
+                    "quote": "In this town, if you want to take a dump, you're going to have to tip-toe around my wedding ring!"
+                
+                },
+                {
+                    "name": "Dameon 'Digital' Dandy",
+                    "type": "Steam-Powered Medicine Show Performer",
+                    "trait": "being able to spellbind robots and children alike with a smile and a wink",
+                    "goal": "to tell the story of the CyberWest's displaced native tribes through his mesmerizing performances",
+                    "quote": "Step right up, folks! Witness the wonders of the digital frontier, where the silicon stream meets the digital dream!"
+                },
+                {
+                    "name": "Calamity 'Glitch' Jane",
+                    "type": "Notorious Data Pirate & System Crasher",
+                    "trait": "being able to bypass any firewall with a rusty horseshoe nail and a witty remark",
+                    "goal": "to execute the biggest data heist in the history of the digital frontier: the Central Bank's encryption keys",
+                    "quote": "They call it a firewall; I call it a welcome mat."
+                },
+                {
+                    "name": "Calamity 'Glitch' James",
+                    "type": "Notorious Drag Performer & Party Crasher",
+                    "trait": "being somebody who looks great in a tight, black cocktail dress",
+                    "goal": "to find love",
+                    "quote": "Champaign for my real friends. Real pain for my sham friends."
+                },
+                {
+                    "name": "Prospector 'Silicon' Sam",
+                    "type": "grizzled data-miner",
+                    "trait": "being unstable and muttering about 'the motherlode of lost memes'",
+                    "goal": "to find the legendary Lost Archives of the Ancients",
+                    "quote": "There's data in them thar hills!"
+                }
+            ],
+            
+            settings: [
+                {
+                    "name": "Neo-Dodge City",
+                    "description": "the bustling cyber-western business district where steam-powered automatons and cyborg cowboys roam the streets,",
+                    "feature": "the towering Data Saloon, a hub for information traders and hackers",
+                    "atmosphere": "tense with the constant hum of servers and the occasional burst of steam"
+                },
+                {
+                    "name": "the Silicon Plains",
+                    "description": "the vast open fields dotted with server farms and wind turbines that harvest both wind and data,",
+                    "feature": "the Quantum Ranch, where quantum cows are farmed for their processing power",
+                    "atmosphere": "calm but with an underlying current of data storms"
+                },
+                {
+                    "name": "the Rusty Rail Yard",
+                    "description": "the old train depot where steam-powered trains transport data packets across the territory,",
+                    "feature": "the Data Depot, a hub for freight and passenger trains carrying information",
+                    "atmosphere": "noisy with the clatter of machinery and the whistle of steam engines"
+                },
+                {
+                    "name": "Quantum Canyon",
+                    "description": "the deep gorge carved by ancient data streams, now a popular spot for data miners and prospectors,",
+                    "feature": "the Quantum Quarry, where rare quantum crystals are mined",
+                    "atmosphere": "crackling with plasmic spikes of the quantum hum"
+                },
+                {
+                    "name": "Database Desert",
+                    "description": "the arid SQL wasteland where rogue algorithms roam free and data rustlers hide out,",
+                    "feature": "the Mirage Oasis, a rumored hotspot for lost data packets",
+                    "atmosphere": "desolate with occasional glitches in the matrix"
+                },
+                {
+                    "name": "Time Crystal Canyon",
+                    "description": "the deep ravine filled with naturally occurring silicon formations that amplify digital signals,",
+                    "feature": "the Echo Mesa, known for its perfect data resonance",
+                    "atmosphere": "mysterious ether and shadowy refractions of light"
+                },
+                {
+                    "name": "Binary Glitch Gulch",
+                    "description": "the treacherous pass between two mountains where data streams converge unpredictably,",
+                    "feature": "the Crossroads Relay Station, a vital comms hub",
+                    "atmosphere": "dangerous with the threat of data storms"
+                },
+                {
+                    "name": "Neon Badlands",
+                    "description": "the colorful, chaotic outskirts of Neo-Dodge City where rogue AIs and outlaw hackers thrive,",
+                    "feature": "the Neon Bazaar, a marketplace for illegal data trades",
+                    "atmosphere": "vibrant but lawless, with neon lights flickering in the darkness"
+                },
+                {
+                    "name": "Steam-Powered Outpost",
+                    "description": "a remote settlement where steam-powered automatons and settlers live off the grid,",
+                    "feature": "the Steamworks Factory, a place where machines are built and repaired",
+                    "atmosphere": "isolated but industrious, with the sound of hissing steam"
+                },
+                {
+                    "name": "Quantum Forest",
+                    "description": "a dense forest filled with quantum trees that can process data at incredible speeds,",
+                    "feature": "the Data Grove, a serene place for meditation and data analysis",
+                    "atmosphere": "peaceful with the rustling of leaves and the hum of quantum energy"
+                },
+                {
+                    "name": "Holographic Hills",
+                    "description": "rolling hills where holographic projections create illusions of grandeur,",
+                    "feature": "the Holo-Dome, a venue for virtual reality shows and events",
+                    "atmosphere": "dreamlike with shifting images and sounds"
+                },
+                {
+                    "name": "Cybernetic Caves",
+                    "description": "a network of underground tunnels where rogue AIs and data miners hide,",
+                    "feature": "the Data Vault, a secret repository of valuable information",
+                    "atmosphere": "dark and eerie with the faint glow of data streams"
+                },
+                {
+                    "name": "Digital Divide",
+                    "description": "a vast chasm separating the rich data districts from the impoverished outskirts,",
+                    "feature": "the Bridge of Bytes, a critical link for data transport",
+                    "atmosphere": "tense with the constant threat of data breaches"
+                },
+                {
+                    "name": "Quantum Oasis",
+                    "description": "a hidden paradise where quantum energy flows freely,",
+                    "feature": "the Quantum Pool, a place for relaxation and rejuvenation",
+                    "atmosphere": "serene with the gentle hum of quantum waves"
+                },
+                {
+                    "name": "Data Dunes",
+                    "description": "a vast expanse of shifting sands that can disrupt data signals,",
+                    "feature": "the Signal Tower, a beacon for lost data packets",
+                    "atmosphere": "unstable with the constant threat of data storms"
+                },
+                {
+                    "name": "Big Box Canyon",
+                    "description": "a secret location in the Gorge where massive data storage units are transported,",
+                    "feature": "the Data Warehouse, a hub for data storage and retrieval",
+                    "atmosphere": "claustrophobic with towering walls of data units",
+                },
+                {
+                    "name": "Rio Digital Gorge",
+                    "description": "a deep canyon carved by the flow of data streams,",
+                    "feature": "Cruces Norte Data Bridge, the vital crossroads for data transport",
+                    "atmosphere": "majestically inspiring with the sound of rushing data",
+                }
+
+            ],
+            
+            events: [
+                {
+                    "event_type": "Data Storm",
+                    "event_action_past": "triggered a catastrophic flash flood of SQL frames",
+                    "event_object_catalyst": "rogue weather-algorithm",
+                    "event_consequence": "all local drones can't stop speaking in reverse Quantum binary, causing widespread confusion with blockchain hashtags",
+                    "weather": "violent thunderstorms of corrupted data packets"
+                },
+                {
+                    "event_type": "Data Breach",
+                    "event_action_past": "hacked into a massive core dump",
+                    "event_object_catalyst": "spiderbots in the feed at the local cattlecoin ranch",
+                    "event_consequence": "counterfeit cattlecoin being minted as NFTs on the Dark Blockchain, causing fear and panic among Digital Traders back east, but wwho cares, right?",
+                    "weather": "shocking electromagnetic mist"
+                },
+                {
+                    "event_type": "Data Corruption",
+                    "event_action_past": "caused a cascading failure function", 
+                    "event_object_catalyst": "data corruption in the local quantum server farm",
+                    "event_consequence": "a city-wide system lockdown and mandatory diagnostics for all automatons, including the Mayor",
+                    "weather": "light drizzle of quantum entangled raindrops"
+                },
+                {
+                    "event_type": "Data Leak",
+                    "event_action_past": "leaked sensitive passwords and mission critical encryption keys",
+                    "event_object_catalyst": "the malware infestation from the local neuroserver hog farm",
+                    "event_consequence": "robot spiders being released into the city's data framework to clean up, creating a new web of misinformation that is leaving the citizens confused and paranoid",
+                    "weather": "freak optic fiber twisters"
+                },
+                {
+                    "event_type": "Data Theft",
+                    "event_action_past": "stole confidential and disturbing financial spreadsheets",
+                    "event_object_catalyst": "the data cache stolen from another local bison ranch",
+                    "event_consequence": "a wave of fake bisonbits flooding the market, causing chaos in the crypto economy, and a booming black market",
+                    "weather": "sideways, face-biting rain of zero point energy transfer droplets"
+                },
+                {
+                    "event_type": "Uprising",
+                    "event_action_past": "staged a riotous fandango",
+                    "event_object_catalyst": "a critical shortage of high-grade processing coolant",
+                    "event_consequence": "a city-wide system lockdown and mandatory diagnostics for all automatons",
+                    "weather": "large pixellated dust storms"
+                },
+                {
+                    "event_type": "Discovery",
+                    "event_action_past": "unearthed a mysterious enigma",
+                    "event_object_catalyst": "an ancient data-crystal humming with forgotten code",
+                    "event_consequence": "this sudden frantic rushing in as factions of crypto ranchers and data farmers vie to decode its secrets, believing it holds the key to untold power or unspeakable malware",
+                    "weather": "semi-autonomous hexavalent chromium fog"
+                },
+                {
+                    "event_type": "Malfunction",
+                    "event_action_past": "suffered a catastrophic transformation",
+                    "event_object_catalyst": "logic core corruption after downloading a pirated banjo tune",
+                    "event_consequence": "menacing avatars communicating in cryptic riddles and demanding tributes in the form of vintage vacuum tubes",
+                    "weather": "cloudfront of acid rain"
+                },
+                {
+                    "event_type": "Heist",
+                    "event_action_past": "attempted a daring heist",
+                    "event_object_catalyst": "vulnerabilities in the Territorial Data Bank's main vault, rumored to contain the original source code of the first thinking machine",
+                    "event_consequence": "an army of robotic tumbleweeds triggering a NextGen plasma stampede, perhaps as a distraction. A bounty placed on their head is payable in cryptocurrency only. No trades.",
+                    "weather": "superpositioning Quantum tornadoes" 
+                },
+                {
+                    "event_type": "Attack",
+                    "event_action_past": "launched a surprise attack",
+                    "event_object_catalyst": "an attack on a passing native operating system by a rogue AI gang",
+                    "event_consequence": "the local sheriff's office practising a policy of 'shoot first, use the Voight-Kamph test later' when it comes to unlicensed superintelligence",
+                    "weather": "deadly solar flare storm wavefronts"
+                },
+
+                {
+                    "event_type": "Invasion",
+                    "event_action_past": "penetrated the town's defenses from high orbit",
+                    "event_object_catalyst": "a metoric shower of tetrion particles from a suspicious neighboring galactic sector",
+                    "event_consequence": "the town's defenses getting stronger than ever, with new anti-meteor shields and updates to the fortified data wall",
+                    "weather": "epic coronal mass ejections"
+                },
+                {
+                    "event_type": "Rescue",
+                    "event_action_past": "rescued suffering victims",
+                    "event_object_catalyst": "displaced refugees from a collapsing data mine",
+                    "event_consequence": "the optimistic victims finding new homes in abandoned data mines, where they can live freely without fear of persecution",
+                    "weather": "freak blizzards of digital slowflakes"
+                },
+                {
+                    "event_type": "Rescue Mission",
+                    "event_action_past": "embarked on a daring rescue mission",
+                    "event_object_catalyst": "the heart-warming rescue of a group of now-displaced refugees",
+                    "event_consequence": "some local ranchers and homesteaders offering santuary while refugees are wary of data trafficking",
+                    "weather": "beautiful but deadly electromagnetic Magnetite-dust storms"
+                },
+                {
+                    "event_type": "Showdown",
+                    "event_action_past": "challenged a rival to a high-noon confrontation",
+                    "event_object_catalyst": "the blood-feud prompting a code-duel in the town square, compilers at the ready",
+                    "event_consequence": "the loser facing public shame and a forced system wipe",
+                    "weather": "almost lethal level of humidity"
+                },
+                {
+                    "event_type": "Conspiracy",
+                    "event_action_past": "conspired to secretly murder opponents",
+                    "event_object_catalyst": "a secret society of MegaTech Industrial Gangsters plotting to overthrow the decentralized web was discovered by a local stray robot hound dog, known as Hacker",
+                    "event_consequence": "the town's leaders are now staying on high alert, and a newly deputized robot canine task force has been formed to investigate the anti-matter",
+                    "weather": "digital dust storms"
+                },
+                {
+                    "event_type": "Daring Daylight Robbery",
+                    "event_action_past": "ran over innocent by-standers with a self-driving get-away car",
+                    "event_object_catalyst": "an irresistable opportunity arising when the MegaTech payroll delivery speed train derailing just outside of town",
+                    "event_consequence": "continuing defragmentation of the usual robot suspects",
+                    "weather": "unseasonably hot Gamma rays with a chance of fragmentation dangerous to cyborgs"
+                },
+            ],
+            
+            templates: [
+                "The {weather} in {setting_name} turned out to be particularly {setting_atmosphere}. {character_name}, a {character_type} known for {character_trait}, was on a mission {character_goal}. They had just dealt with {event_object_catalyst} and now faced a new challenge: the {event_type}. {character_name} exclaimed, '{character_quote}' as they were there the last time someone {event_action_past} and triggered {event_object_catalyst}. This led to {event_consequence}. What nefarious forces really {previous_event} even the governor doesn't want to start an investigation. Who can be ever sure of anything anymore? The winds of digital transformation are a-blowing.",
+                "In the heart of {setting_name}, home of {setting_feature} stands tall, {character_name} the {character_type} was caught off guard by the {weather}. Proudly {character_trait}, they were on a quest {character_goal} when they encountered the {event_type}. 'I never expected to see {event_object_catalyst} here,' they said, before adding, '{character_quote}' The result was {event_consequence}. Well, whoever or whatever {previous_event} of these commodities, what next? Fear not! Or do... Government regulators are on the way to fix this. Or not.",
+                "Tensions around {setting_name}, normally {setting_description} the cursed location of {setting_feature} is a popular diversion for visiting aliens, {character_name} the {character_type} took shelter in a cave to avoid the {weather}. Now their usual self {character_trait}, they wanted {character_goal} when: {event_type}. 'I saw it coming,' they exclaimed, 'and did what I had to do.' In the aftermath {event_consequence}. What foolish parties {previous_event} for who knows what, we have no idea, so local authorities are investigating how to prevent similar particulars.",
+                "Beautiful {setting_name}, the place with {setting_description} the mysterious address of {setting_feature}, {character_name} the {character_type} was unexpectedly delayed by the {weather}. Known for {character_trait}, they were on a mission to {character_goal} when they encountered the {event_type}. 'I can't believe I just {event_action_past} {event_object_catalyst},' they exclaimed, 'but I guess that's just how the holographic simulation program runs.' In the aftermath we are seeing {event_consequence}. Who {previous_event}, we may ask but knowing hardly prepares us for what comes next.",
+                "Amidst {setting_description} known as {setting_name}, the appalling monstrosity turned landmark, {setting_feature} dominates the skyline, {character_name} the {character_type} found themselves suddenly confronting {weather} in the local area. Known throughout the territory as {character_trait}, their current quest {character_goal} was interrupted when they {event_action_past} with {event_object_catalyst}. 'To hell with whatever {event_consequence} whatever,' they muttered, before shouting '{character_quote}' As a result, {event_consequence}. Who exactly {previous_event}, {event_type}? Maybe we know? But if not, a mood shift is still in the air.",
+                "As the {weather} swept through {setting_name}, {character_name} contemplated their next move. 'I've got {character_goal},' thought the {character_type}, whose reputation for {character_trait} is well-earned. But then came the {event_type} when someone {event_action_past} and caused {event_object_catalyst}, completely disrupting normal blockchain activities. Devious unknown agents {previous_event} or something, of course, but life goes on. Our hero declared: '{character_quote}' Who was it {previous_event} with this folderall {event_type}? Witnesses recant or vanish.  The aftermath saw {event_consequence} throughout the region.",
+                "Sweet {setting_name}, sacred resting place of {setting_description} and {setting_feature} draws crowds in the Spring, was rocked suddenly by {weather}. {character_name}, a {character_type} known for {character_trait}, was as always doing their best to {character_goal} when the {event_type} materialized. 'It was a fine day when the {event_object_catalyst} just came from out of nowhere,' they exclaimed, '{character_quote}' Now {event_consequence}. So it's so that so-and-so {previous_event} but you know that is just SO the way that it is.",
+                "Now we have heard that in {setting_name}, where {setting_description} and {setting_feature} are holographically intense with the framecount rendering, {character_name}, a {character_type} known for {character_trait}, was on target {character_goal} when they encountered the {event_type}. 'I was just counting the onions on my belt when I saw {event_object_catalyst} and well...,' they sputtered, '{character_quote}' Afterwards, {event_consequence}. Is that the end of that? Not quite as they {previous_event} that has configs muddled and sceptics still leer.",
+                "Dark conspiracy theorists commenting in {setting_name}, where {character_name}, a {character_type} known for {character_trait}, had largely had enough! Always wanting {character_goal} it was a bracing conundrum to witness - {event_type}. 'Haven't seen {event_object_catalyst} here since the Great Awakening of '29,' they said, whispering, '{character_quote}' Confusion after {event_consequence}; innocent by-standers may have {previous_event} so locals are on edge and robots wary."
+            ]
+        };
+
+        // ===== STORY GENERATION FUNCTIONS =====
+        function getRandomElement(array) {
+            return array[Math.floor(Math.random() * array.length)];
+        }
+
+        function generateStorySnippet(gameState) {
+            const character = getRandomElement(data.characters);
+            const setting = getRandomElement(data.settings);
+            const event = getRandomElement(data.events);
+            const template = getRandomElement(data.templates);
+
+            const previous_event = gameState.state.past_events.length > 0 ? 
+                gameState.state.past_events[gameState.state.past_events.length - 1] : 
+                "the town was quiet as the digital sun rose over Neo-Dodge City";
+
+            const storyData = {
+                setting_name: setting.name || "Unknown",
+                setting_description: setting.description || "",
+                setting_feature: setting.feature || "",
+                setting_atmosphere: setting.atmosphere || "",
+                character_name: character.name || "Unknown",
+                character_type: character.type || "",
+                character_trait: character.trait || "",
+                character_goal: character.goal || "",
+                character_quote: character.quote || "",
+                event_type: event.event_type || "",
+                event_object_catalyst: event.event_object_catalyst || "",
+                event_consequence: event.event_consequence || "",
+                event_action_past: event.event_action_past || "",
+                weather: event.weather || "calm",
+                previous_event: previous_event,
+                location_status: gameState.state.location_status[setting.name] || "calm"
+            };
+
+            try {
+                return {
+                    story: template.replace(/\{(\w+)\}/g, (_, key) => storyData[key]),
+                    event: event,
+                    setting: setting,
+                    character: character
+                };
+            } catch (e) {
+                return {
+                    story: `[ERROR] Formatting error: ${e}`,
+                    event: null,
+                    setting: null,
+                    character: null
+                };
+            }
+        }
+        
+        function generateStories() {
+            const container = document.getElementById('generated-stories');
+            container.innerHTML = '';
+            
+            gameState.state.day++;
+            const dayHeader = document.createElement('h4');
+            dayHeader.style.textAlign = 'center';
+            dayHeader.textContent = `News from Day ${gameState.state.day} of Tomorrow's Tomorrow Edition, from the cowboy printer alternate timeline universe news service, bringing you the interdimensional Timelines of the Future: Today!`;
+            dayHeader.style.marginTop = '20px';
+            container.appendChild(dayHeader);
+            
+            for (let i = 0; i < 3; i++) {
+                const {story, event, setting, character} = generateStorySnippet(gameState);
+                
+                const storyElement = document.createElement('div');
+                storyElement.className = 'generated-story';
+                
+                storyElement.innerHTML = `
+                    <div class="generated-story-header">
+                        <img src="https://www.cowboyprinter.com/wp-content/uploads/2025/06/thumbnailBROTHERS.jpg" alt="Story Thumbnail" class="story-header-thumbnail">
+                        <h3 class="generated-story-title">ittps: data stream #${i+1}: ${event.event_type} in ${setting.name}</h3>
+                        <div class="generated-story-location">
+                            ${setting.name} <span class="weather-tag">${event.weather}</span>
+                        </div>
+                    </div>
+                    <div class="generated-story-content">
+                        <img src="https://www.cowboyprinter.com/wp-content/uploads/2025/06/thumbnailPOSSE.jpg" alt="A scene from the mountain pass" class="story-body-image">
+                        ${story}
+                    </div>
+                    <div class="generated-story-quote">
+                        "${character.quote}" - ${character.name}
+                    </div>
+                `;
+                
+                container.appendChild(storyElement);
+                
+                if (event) {
+                    gameState.add_event(event);
+                }
+            }
+            
+            const footer = document.createElement('div');
+            footer.style.textAlign = 'center';
+            footer.style.marginTop = '20px';
+            footer.style.fontStyle = 'italic';
+            footer.textContent = "Okay, ...Wow! RESET for ANOTHER UNIVERSE or GENERATE MORE of TOMORROW'S NEWS from This Universe!";
+            container.appendChild(footer);
+        }
+
+        // ===== INITIALIZATION AND EVENT HANDLERS =====
+        const gameState = new GameState();
+        gameState.load();
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Date and Time Update
+            const dateElement = document.getElementById('current-date');
+            const timeElement = document.getElementById('current-time');
+            const yearElement = document.getElementById('current-year');
+
+            function updateDateTime() {
+                const now = new Date();
+                const optionsDate = { year: 'numeric', month: 'long', day: 'numeric' };
+                const optionsTime = { hour: 'numeric', minute: '2-digit', hour12: true };
+                
+                // For a 19th-century feel, we'll use a fixed year
+                const formattedDate = now.toLocaleDateString('en-US', optionsDate).replace(now.getFullYear(), '1888');
+                dateElement.textContent = 'DATE: ' + formattedDate;
+                timeElement.textContent = 'TIME: ' + now.toLocaleTimeString('en-US', optionsTime);
+                
+                if (yearElement) {
+                    yearElement.textContent = '1888';
+                }
+            }
+            updateDateTime();
+            setInterval(updateDateTime, 60000);
+
+            //  Story Generation Controls 
+            document.getElementById('generateBtn').addEventListener('click', generateStories);
+            document.getElementById('resetBtn').addEventListener('click', () => {
+                gameState.reset();
+                document.getElementById('generated-stories').innerHTML = 
+                    '<div class="loading">Game state reset. Generate new stories to begin.</div>';
+            });
+
+            //  Tic-Tac-Toe Game Logic 
+            const cells = document.querySelectorAll('.cell');
+            const gameStatus = document.getElementById('game-status');
+            const resetButton = document.getElementById('reset-game');
+            let currentPlayer = 'X';
+            let boardState = ['', '', '', '', '', '', '', '', ''];
+            let gameActive = true;
+
+            const winningConditions = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+                [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+                [0, 4, 8], [2, 4, 6]             // Diagonals
+            ];
+
+            function handleCellClick(event) {
+                const clickedCell = event.target;
+                const clickedCellIndex = parseInt(clickedCell.getAttribute('data-index'));
+
+                if (boardState[clickedCellIndex] !== '' || !gameActive) {
+                    return;
+                }
+
+                boardState[clickedCellIndex] = currentPlayer;
+                clickedCell.textContent = currentPlayer;
+                
+                checkResult();
+            }
+
+            function checkResult() {
+                let roundWon = false;
+                for (let i = 0; i < winningConditions.length; i++) {
+                    const winCondition = winningConditions[i];
+                    let a = boardState[winCondition[0]];
+                    let b = boardState[winCondition[1]];
+                    let c = boardState[winCondition[2]];
+                    if (a === '' || b === '' || c === '') {
+                        continue;
+                    }
+                    if (a === b && b === c) {
+                        roundWon = true;
+                        break;
+                    }
+                }
+
+                if (roundWon) {
+                    gameStatus.textContent = `Player ${currentPlayer} Wins! Hooray!`;
+                    gameActive = false;
+                    return;
+                }
+
+                if (!boardState.includes('')) {
+                    gameStatus.textContent = 'It\'s a Draw, Pardner!';
+                    gameActive = false;
+                    return;
+                }
+
+                currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                gameStatus.textContent = `Player ${currentPlayer}'s Turn`;
+            }
+
+            function resetGame() {
+                boardState = ['', '', '', '', '', '', '', '', ''];
+                gameActive = true;
+                currentPlayer = 'X';
+                gameStatus.textContent = `Player ${currentPlayer}'s Turn`;
+                cells.forEach(cell => cell.textContent = '');
+            }
+
+            cells.forEach(cell => cell.addEventListener('click', handleCellClick));
+            resetButton.addEventListener('click', resetGame);
+        });
+    </script>
+</body>
 </html>
