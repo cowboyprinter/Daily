@@ -668,15 +668,26 @@
                 max-width: 100%;
             }
 
+            /* ... */
             .below-fold-content {
-                grid-template-columns: 1fr;
-                grid-template-areas: 
+                grid-template-columns: 1fr; /* This keeps the single column layout */
+                grid-template-areas:
                     "cartoon"
                     "tictactoe"
-                    "advertisement";
-                gap: 15px;
+                    "advertisement1" /* Now it has a room */
+                    "advertisement2" /* This one too */
+                    "classifieds";   /* And this one! */
+                gap: 20px; /* A little more space for mobile can be nice */
             }
-
+            /* ... */
+            
+            .classifieds-content {
+                column-count: 1; /* This fixes the classifieds columns */
+            }
+            .advertisement1, .advertisement2 {
+                width: 100%;
+                margin-top: 20px;
+            } 
             .tic-tac-toe-board {
                 grid-template-columns: repeat(3, 50px);
                 grid-template-rows: repeat(3, 50px);
@@ -785,7 +796,7 @@
                 </div>
             </header>
 
-            </header>
+           
 
             <main class="newspaper-body">
                 <!-- Story Generation Controls -->
