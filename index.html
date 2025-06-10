@@ -214,6 +214,11 @@
             object-fit: cover; /* Prevents the image from being stretched or squished */
             flex-shrink: 0; /* Prevents the image from shrinking if the title is long */
         }
+        .byline {
+            font-style: italic;
+            margin-right: 5px; /* Adds a little space between the byline and the location name */
+            color: #5c3d2e; /* A slightly different color to make it stand out */
+        }
         .story-body-image {
             width: 200px;
             height: auto; /* Let the height adjust automatically to maintain aspect ratio */
@@ -281,7 +286,9 @@
             grid-template-columns: 1fr 1fr;
             grid-template-areas: 
                 "cartoon tictactoe"
-                "advertisement1 advertisement2"; /*  NEW, BETTER RULE! */
+                
+                "advertisement1 advertisement2" /*  NEW, BETTER RULE! */
+                "classifieds classifieds"; /* The new section spans both bottom columns */
             gap: 20px;
             margin-top: 30px;
             padding-top: 20px;
@@ -291,7 +298,46 @@
         .tic-tac-toe-section { grid-area: tictactoe; text-align: center;}
         .story-three { grid-area: story3; }
         .advertisement { grid-area: advertisement; }
+        /* ==== CLASSIFIEDS ==== */
+        .classifieds {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f0ead6; /* A slightly different background */
+            border: 1px solid #d2b48c;
+        }
 
+        .classifieds h4 {
+            font-family: 'Playfair Display', serif;
+            text-align: center;
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px double #5c3d2e;
+        }
+
+        .classifieds-content {
+            column-count: 3; /* The magic for 3 columns */
+            column-gap: 20px; /* Space between columns */
+            column-rule: 1px solid #e6dbc8; /* The faint line between columns */
+            text-align: justify;
+            font-size: 0.9em;
+        }
+
+        .ad-item {
+            margin-bottom: 15px;
+            /* This helpful rule prevents an ad from being split across two columns */
+            break-inside: avoid;
+        }
+
+        .ad-item strong {
+            font-weight: bold;
+            display: block; /* Puts the title on its own line */
+        }
+
+        /* Also add this new rule to assign the section to the grid area */
+        .classifieds {
+            grid-area: classifieds;
+        }
         .media-wrap {
             margin: 10px 0;
         }
@@ -776,25 +822,56 @@
                         <button id="reset-game">New Game</button>
                         <p id="game-status">Player X's Turn</p>
                     </section>
+                    
+                    <aside class="advertisement1">
+                            <div class="ad-border">
+                                <h3>Have you seen this man?</h3>
+                                <img src="https://www.cowboyprinter.com/wp-content/uploads/2025/06/springsteen.THUMB_NAIL.jpg" alt="Wanted for Good: Bruce Springsteen" class="ad-image">
+                                <p>Approach with extreme kindness.</p>
+                                <a href="https://www.wantedforgood.com" target="_blank" class="ad-link">Visit WANTED FOR GOOD!</a>
+                            </div>
+                        </aside>
 
-                   <aside class="advertisement1">
-                        <div class="ad-border">
-                            <h3>Have you seen this man?</h3>
-                            <img src="https://www.cowboyprinter.com/wp-content/uploads/2025/06/springsteen.THUMB_NAIL.jpg" alt="Wanted for Good: Bruce Springsteen" class="ad-image">
-                            <p>Approach with extreme kindness.</p>
-                            <a href="https://www.wantedforgood.com" target="_blank" class="ad-link">Visit WANTED FOR GOOD!</a>
-                        </div>
-                    </aside>
+                        <aside class="advertisement2">
+                            <div class="ad-border">
+                                <h4>GET A DARN TOOTIN' T-SHIRT!</h4>
+                                <img src="https://www.cowboyprinter.com/wp-content/uploads/2025/05/IGyEl26XjYi3sGyOysz6-3-v6qcd.jpg" alt="Cowboy Printer T-Shirt" class="ad-image">
+                                <p>Finest Quality Threads for the Discerning New Frontier Pioneer, Cyberpunks and The Snatched!</p>
+                                <a href="https://www.cowboyprinter.com/store" target="_blank" class="ad-link">VISIT THE GENERAL STORE!</a>
+                            </div>
+                        </aside>
+                    <section class="classifieds">
+                            <h4>~ CLASSIFIEDS ~</h4>
+                            <div class="classifieds-content">
 
-                    <aside class="advertisement2">
-                        <div class="ad-border">
-                            <h4>GET A DARN TOOTIN' T-SHIRT!</h4>
-                            <img src="https://www.cowboyprinter.com/wp-content/uploads/2025/05/IGyEl26XjYi3sGyOysz6-3-v6qcd.jpg" alt="Cowboy Printer T-Shirt" class="ad-image">
-                            <p>Finest Quality Threads for the Discerning New Frontier Pioneer, Cyberpunks and The Snatched!</p>
-                            <a href="https://www.cowboyprinter.com/store" target="_blank" class="ad-link">VISIT THE GENERAL STORE!</a>
-                        </div>
-                    </aside>
+                                <div class="ad-item">
+                                    <strong>FOR SALE:</strong> 9-Barrel Handgun. Impressive conversation starter. Note: All barrels fire simultaneously. Excellent for crowd control or accidentally shooting your horse. Inquire at Neo-Dodge Saloon. Ask for 'Glitch'.
+                                </div>
 
+                                <div class="ad-item">
+                                    <strong>HELP WANTED:</strong> Trail Boss & Drovers needed for trans-dimensional holographic cattle drive. Must be resistant to data-stampedes and crypto-rustlers. Payment in verifiable cattle-coin. Serious applicants only.
+                                </div>
+
+                                <div class="ad-item">
+                                    <strong>SEEKING ADVENTURE:</strong> Two brave souls seeking passage to the Klondike Gold Fields. Have our own gear and a faulty map. Willing to trade quantum computing skills for safe passage and a warm meal.
+                                </div>
+
+                                <div class="ad-item">
+                                    <strong>LOST:</strong> One temporal displacement key, looks like a brass pocket watch. If found, DO NOT wind it. Last seen somewhere between yesterday and next Tuesday. Sentimental value. Reward offered.
+                                </div>
+                                
+                                <div class="ad-item">
+                                    <strong>POEM-FOR-HIRE:</strong> Need a sonnet for your sweetheart or a limerick for your rival? Cogsworth the Poetic Automaton offers bespoke verses for any occasion. Satisfaction guaranteed or your money back (in 1s and 0s).
+                                </div>
+
+                                <div class="ad-item">
+                                    <strong>FOR RENT:</strong> Cozy one-room server rack with excellent uptime. Minimal data storms. Perfect for a bachelor automaton or a starting-out AI. Low latency to the Data Depot.
+                                </div>
+
+                            </div>
+
+
+                    </section>      
                 </div>
             </main>
 
@@ -825,7 +902,7 @@
             initialize() {
                 this.state = {
                     day: 0,
-                    past_events: ["so town was quiet as the digital sun rose over Neo-Dodge City"],
+                    past_events: ["a town quiet as the digital sun rose over Neo-Dodge City"],
                     character_status: {},
                     location_status: {"Neo-Dodge City": "calm"},
                     character_list: [],
@@ -1244,7 +1321,7 @@
                 {
                     "event_type": "Showdown",
                     "event_action_past": "challenged a rival to a high-noon confrontation",
-                    "event_object_catalyst": "the blood-feud prompting a code-duel in the town square, compilers at the ready",
+                    "event_object_catalyst": "the blood-feud prompting a codebase-duel in the virtual town square,",
                     "event_consequence": "the loser facing public shame and a forced system wipe",
                     "weather": "almost lethal level of humidity"
                 },
@@ -1257,7 +1334,7 @@
                 },
                 {
                     "event_type": "Daring Daylight Robbery",
-                    "event_action_past": "ran over innocent by-standers with a self-driving get-away car",
+                    "event_action_past": "innocent by-standers run over by a self-driving get-away car",
                     "event_object_catalyst": "an irresistable opportunity arising when the MegaTech payroll delivery speed train derailing just outside of town",
                     "event_consequence": "continuing defragmentation of the usual robot suspects",
                     "weather": "unseasonably hot Gamma rays with a chance of fragmentation dangerous to cyborgs"
@@ -1266,13 +1343,13 @@
             
             templates: [
                 "The {weather} in {setting_name} turned out to be particularly {setting_atmosphere}. {character_name}, a {character_type} known for {character_trait}, was on a mission {character_goal}. They had just dealt with {event_object_catalyst} and now faced a new challenge: the {event_type}. {character_name} exclaimed, '{character_quote}' as they were there the last time someone {event_action_past} and triggered {event_object_catalyst}. This led to {event_consequence}. What nefarious forces really {previous_event} even the governor doesn't want to start an investigation. Who can be ever sure of anything anymore? The winds of digital transformation are a-blowing.",
-                "In the heart of {setting_name}, home of {setting_feature} stands tall, {character_name} the {character_type} was caught off guard by the {weather}. Proudly {character_trait}, they were on a quest {character_goal} when they encountered the {event_type}. 'I never expected to see {event_object_catalyst} here,' they said, before adding, '{character_quote}' The result was {event_consequence}. Well, whoever or whatever {previous_event} of these commodities, what next? Fear not! Or do... Government regulators are on the way to fix this. Or not.",
-                "Tensions around {setting_name}, normally {setting_description} the cursed location of {setting_feature} is a popular diversion for visiting aliens, {character_name} the {character_type} took shelter in a cave to avoid the {weather}. Now their usual self {character_trait}, they wanted {character_goal} when: {event_type}. 'I saw it coming,' they exclaimed, 'and did what I had to do.' In the aftermath {event_consequence}. What foolish parties {previous_event} for who knows what, we have no idea, so local authorities are investigating how to prevent similar particulars.",
-                "Beautiful {setting_name}, the place with {setting_description} the mysterious address of {setting_feature}, {character_name} the {character_type} was unexpectedly delayed by the {weather}. Known for {character_trait}, they were on a mission to {character_goal} when they encountered the {event_type}. 'I can't believe I just {event_action_past} {event_object_catalyst},' they exclaimed, 'but I guess that's just how the holographic simulation program runs.' In the aftermath we are seeing {event_consequence}. Who {previous_event}, we may ask but knowing hardly prepares us for what comes next.",
+                "In the heart of {setting_name}, home of {setting_feature} stands tall, {character_name} the {character_type} was caught off guard by the {weather}. Proudly {character_trait}, they were on a quest {character_goal} when they encountered the {event_type}. 'I never expected to see {event_object_catalyst} here,' they said, before adding, '{character_quote}' The result was {event_consequence}. Well, whoever or whatever relieved {previous_event} of these commodities, what next? Fear not! Or do. Government regulators are on the way to fix this. Or not.",
+                "Tensions around {setting_name}, normally {setting_description} the cursed location of {setting_feature} is a popular diversion for visiting aliens, {character_name} the {character_type} took shelter in a cave to avoid the {weather}. Now their usual self {character_trait}, they wanted {character_goal} when: {event_type}. 'I saw it coming,' they exclaimed, 'and did what I had to do.' In the aftermath {event_consequence}. What foolish parties saw {previous_event} for who knows what, we have no idea, so local authorities are investigating how to prevent similar particulars.",
+                "Beautiful {setting_name}, the place with {setting_description} the mysterious address of {setting_feature}, {character_name} the {character_type} was unexpectedly delayed by the {weather}. Known for {character_trait}, they were on a mission to {character_goal} when they encountered the {event_type}. 'I can't believe I just {event_action_past} {event_object_catalyst},' they exclaimed, 'but I guess that's just how the holographic simulation program runs.' In the aftermath we are seeing {event_consequence}. It was {previous_event}, but knowing that hardly prepares us for what comes next.",
                 "Amidst {setting_description} known as {setting_name}, the appalling monstrosity turned landmark, {setting_feature} dominates the skyline, {character_name} the {character_type} found themselves suddenly confronting {weather} in the local area. Known throughout the territory as {character_trait}, their current quest {character_goal} was interrupted when they {event_action_past} with {event_object_catalyst}. 'To hell with whatever {event_consequence} whatever,' they muttered, before shouting '{character_quote}' As a result, {event_consequence}. Who exactly {previous_event}, {event_type}? Maybe we know? But if not, a mood shift is still in the air.",
                 "As the {weather} swept through {setting_name}, {character_name} contemplated their next move. 'I've got {character_goal},' thought the {character_type}, whose reputation for {character_trait} is well-earned. But then came the {event_type} when someone {event_action_past} and caused {event_object_catalyst}, completely disrupting normal blockchain activities. Devious unknown agents {previous_event} or something, of course, but life goes on. Our hero declared: '{character_quote}' Who was it {previous_event} with this folderall {event_type}? Witnesses recant or vanish.  The aftermath saw {event_consequence} throughout the region.",
-                "Sweet {setting_name}, sacred resting place of {setting_description} and {setting_feature} draws crowds in the Spring, was rocked suddenly by {weather}. {character_name}, a {character_type} known for {character_trait}, was as always doing their best to {character_goal} when the {event_type} materialized. 'It was a fine day when the {event_object_catalyst} just came from out of nowhere,' they exclaimed, '{character_quote}' Now {event_consequence}. So it's so that so-and-so {previous_event} but you know that is just SO the way that it is.",
-                "Now we have heard that in {setting_name}, where {setting_description} and {setting_feature} are holographically intense with the framecount rendering, {character_name}, a {character_type} known for {character_trait}, was on target {character_goal} when they encountered the {event_type}. 'I was just counting the onions on my belt when I saw {event_object_catalyst} and well...,' they sputtered, '{character_quote}' Afterwards, {event_consequence}. Is that the end of that? Not quite as they {previous_event} that has configs muddled and sceptics still leer.",
+                "Sweet {setting_name}, sacred resting place of {setting_description} and {setting_feature} draws crowds in the Spring, was rocked suddenly by {weather}. {character_name}, a {character_type} known for {character_trait}, was as always doing their best to {character_goal} when the {event_type} materialized. 'It was a fine day when the {event_object_catalyst} just came from out of nowhere,' they exclaimed, '{character_quote}' Now {event_consequence}. So it's so that so-and-so remembers {previous_event} but you know that is just SO the way that it is.",
+                "Now we have heard that in {setting_name}, where {setting_description} and {setting_feature} are holographically intense with the framecount rendering, {character_name}, a {character_type} known for {character_trait}, was on target {character_goal} when they encountered the {event_type}. 'I was just counting the onions on my belt when I saw {event_object_catalyst} and well...,' they sputtered, '{character_quote}' Afterwards, {event_consequence}. Is that the end of that? Not quite as theywe find {previous_event} that has configs muddled and sceptics still leer.",
                 "Dark conspiracy theorists commenting in {setting_name}, where {character_name}, a {character_type} known for {character_trait}, had largely had enough! Always wanting {character_goal} it was a bracing conundrum to witness - {event_type}. 'Haven't seen {event_object_catalyst} here since the Great Awakening of '29,' they said, whispering, '{character_quote}' Confusion after {event_consequence}; innocent by-standers may have {previous_event} so locals are on edge and robots wary."
             ]
         };
@@ -1282,6 +1359,21 @@
             return array[Math.floor(Math.random() * array.length)];
         }
 
+
+        /**
+         * Randomly shuffles an array in place.
+         * (Fisher-Yates Shuffle Algorithm)
+         */
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+            }
+        }
+
+
+
+
         function generateStorySnippet(gameState) {
             const character = getRandomElement(data.characters);
             const setting = getRandomElement(data.settings);
@@ -1290,7 +1382,7 @@
 
             const previous_event = gameState.state.past_events.length > 0 ? 
                 gameState.state.past_events[gameState.state.past_events.length - 1] : 
-                "the town was quiet as the digital sun rose over Neo-Dodge City";
+                "a town as quiet as moss when the digital sun rose over Neo-Dodge City like a rolling stone";
 
             const storyData = {
                 setting_name: setting.name || "Unknown",
@@ -1328,54 +1420,82 @@
             }
         }
         
+        // THIS IS THE CORRECTED FUNCTION FOR YOUR SINGLE-PAGE index.html
+
         function generateStories() {
+            // Define the image arrays right here for the single-page version
+            const headerThumbnails = [
+                "https://www.cowboyprinter.com/wp-content/uploads/2025/06/thumbnailPOSSE.jpg",
+                "https://www.cowboyprinter.com/wp-content/uploads/2025/06/thumbnailBROTHERS.jpg",
+                "https://www.cowboyprinter.com/wp-content/uploads/2025/06/thumbnail.SHERIFF_COFFEE.jpg",
+                "https://www.cowboyprinter.com/wp-content/uploads/2025/06/thumbnail.SHREIFFIC.jpg"
+            ];
+
+            const storyBodyImages = [
+                "https://www.cowboyprinter.com/wp-content/uploads/2025/06/thumbnail.STREET.jpg",
+                "https://www.cowboyprinter.com/wp-content/uploads/2025/06/thumbnail.HOLO_.jpg",
+                "https://www.cowboyprinter.com/wp-content/uploads/2025/06/thumbnail.WRASTLINGROBOTS.jpg",
+                "https://www.cowboyprinter.com/wp-content/uploads/2025/06/springsteen.THUMB_NAIL.jpg" 
+            ];
+
             const container = document.getElementById('generated-stories');
             container.innerHTML = '';
             
             gameState.state.day++;
             const dayHeader = document.createElement('h4');
             dayHeader.style.textAlign = 'center';
-            dayHeader.textContent = `News from Day ${gameState.state.day} of Tomorrow's Tomorrow Edition, from the cowboy printer alternate timeline universe news service, bringing you the interdimensional Timelines of the Future: Today!`;
+            dayHeader.textContent = `News from Day ${gameState.state.day} of Tomorrow's Tomorrow Edition {using the official quantum interdimensional time travel file system (ittps) protocol}...`;
             dayHeader.style.marginTop = '20px';
             container.appendChild(dayHeader);
+
+        
+            // ===================================================
+            //  ADD THESE TWO LINES RIGHT HERE!
+            // ===================================================
+            shuffleArray(headerThumbnails);
+            shuffleArray(storyBodyImages);
+            // ===================================================
+
+            // Now, when the loop runs, the image arrays are already shuffled!
+
+
             
-            for (let i = 0; i < 3; i++) {
+            for (let i = 0; i < 3; i++) { // Changed back to 4 stories to use all 4 images
                 const {story, event, setting, character} = generateStorySnippet(gameState);
                 
                 const storyElement = document.createElement('div');
                 storyElement.className = 'generated-story';
-                
+               // ... inside your for loop ...
+
                 storyElement.innerHTML = `
                     <div class="generated-story-header">
-                        <img src="https://www.cowboyprinter.com/wp-content/uploads/2025/06/thumbnailBROTHERS.jpg" alt="Story Thumbnail" class="story-header-thumbnail">
-                        <h3 class="generated-story-title">ittps: data stream #${i+1}: ${event.event_type} in ${setting.name}</h3>
+                        <img src="${headerThumbnails[i % headerThumbnails.length]}" alt="Story Thumbnail" class="story-header-thumbnail">
+                        
+                        <h3 class="generated-story-title">data stream #${i+1}: ${event.event_type} in ${setting.name}</h3>
+                        
                         <div class="generated-story-location">
+                            <span class="byline">Reports from</span> 
+                            
                             ${setting.name} <span class="weather-tag">${event.weather}</span>
                         </div>
                     </div>
+                    
                     <div class="generated-story-content">
-                        <img src="https://www.cowboyprinter.com/wp-content/uploads/2025/06/thumbnailPOSSE.jpg" alt="A scene from the mountain pass" class="story-body-image">
+                        <img src="${storyBodyImages[i % storyBodyImages.length]}" alt="A scene from the story" class="story-body-image">
                         ${story}
                     </div>
+                    
                     <div class="generated-story-quote">
                         "${character.quote}" - ${character.name}
                     </div>
                 `;
-                
+
+// ... rest of the function ...
                 container.appendChild(storyElement);
-                
-                if (event) {
-                    gameState.add_event(event);
-                }
             }
-            
-            const footer = document.createElement('div');
-            footer.style.textAlign = 'center';
-            footer.style.marginTop = '20px';
-            footer.style.fontStyle = 'italic';
-            footer.textContent = "Okay, ...Wow! RESET for ANOTHER UNIVERSE or GENERATE MORE of TOMORROW'S NEWS from This Universe!";
-            container.appendChild(footer);
         }
+
+
 
         // ===== INITIALIZATION AND EVENT HANDLERS =====
         const gameState = new GameState();
